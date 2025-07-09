@@ -1,0 +1,16 @@
+ID,Nombre,Descripcion,Costo,Fecha_Caducidad,Categoria,Stock,Ruta
+85F3F915,Agua Purificada,"Agua embotellada natural sin gas, 500ml",0.50,2025-12-31,Bebidas,120,./agua.jpg
+82B09699,Chocolate en barra,Chocolate con leche 50g,0.75,2026-03-01,Snacks Dulces,80,./chcolate.jpg
+0A99042A,Coca-Cola Lata,"Bebida gaseosa sabor cola, lata de 355ml",0.90,2025-11-20,Bebidas,100,./coca-cola-en-lata.jpg
+5A5F332D,Jugo Del Valle 1L,Jugo de fruta natural sin conservantes,1.50,2025-09-10,Bebidas,60,./DEL-VALLE-1-LITRO.jpg
+09D66912,Doritos Queso,"Nachos de maíz sabor queso, 150g",1.25,2025-10-15,Snacks Salados,75,./doritos.jpeg
+25F069F7,Fiora Toallas Húmedas,Paquete de 50 toallas húmedas para bebé,2.00,2026-06-30,Higiene,50,./fiora.jpg
+AA878A53,Galletas Ricas Nestlé,Galletas dulces con chispas de chocolate,0.95,2025-08-25,Snacks Dulces,90,./galletas-ricas-nestle-58-g.jpg
+C4739F50,Galletas Amor,Galletas de vainilla rellenas de crema,0.85,2025-09-12,Snacks Dulces,85,./galletas_amor.jpg
+995BA078,Kchitos,Palitos de maíz inflado sabor queso,0.60,2025-10-05,Snacks Salados,70,./kchitos.jpg
+5DC28BDC,Nutri Leche Toni,"Leche enriquecida con vitaminas, 1L",1.10,2025-08-20,Lácteos,65,./nutri_leche.jpg
+93D361A0,Pepsi Lata,"Bebida gaseosa sabor cola, lata de 355ml",0.85,2025-11-25,Bebidas,95,./Pepsi-lata.png
+FFFF9368,Ruffles Original,"Papas fritas onduladas, saladas, 150g",1.20,2025-10-10,Snacks Salados,60,./ruffles.jpg
+B2B29A8A,Seven Up,"Bebida gaseosa lima-limón, lata de 355ml",0.85,2025-11-15,Bebidas,90,./seven.jpg
+B074ABAC,Sunny Del Valle,"Bebida frutal sabor tropical, 600ml",1.30,2025-09-30,Bebidas,55,./Sunny.jpg
+29A5080B,Yogurt Toni,"Yogurt sabor fresa con probióticos, 1L",1.60,2025-08-15,Lácteos,70,./yogurt-toni.jpeg
