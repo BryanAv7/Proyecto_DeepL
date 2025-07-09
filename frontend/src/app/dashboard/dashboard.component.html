@@ -17,14 +17,19 @@
             <img *ngIf="imageSrc" [src]="imageSrc" alt="Imagen cargada" class="img-preview" />
         </div>
 
-        <div class="resultado">
-            <ng-container *ngIf="cargando; else mostrarResultado">
-                Procesando predicción...
-            </ng-container>
-
-            <ng-template #mostrarResultado>
-                <pre *ngIf="resultado">{{ resultado | json }}</pre>
-            </ng-template>
+        <div class="resultado" *ngIf="resultado.ID && !cargando">
+            <h2>📦 Detalles del Producto</h2>
+            <div class="ficha-producto">
+                <p><strong>ID:</strong> {{ resultado.ID }}</p>
+                <p><strong>Nombre:</strong> {{ resultado.Nombre }}</p>
+                <p><strong>Descripción:</strong> {{ resultado.Descripcion }}</p>
+                <p><strong>Categoría:</strong> {{ resultado.Categoria }}</p>
+                <p><strong>Costo:</strong> ${{ resultado.Costo }}</p>
+                <p><strong>Stock:</strong> {{ resultado.Stock }} unidades</p>
+                <p><strong>Fecha de Caducidad:</strong> {{ resultado.Fecha_Caducidad }}</p>
+                
+            </div>
         </div>
+
     </main>
 </div>

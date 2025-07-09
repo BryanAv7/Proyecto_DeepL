@@ -88,12 +88,25 @@
 
 .resultado {
   margin-top: 20px;
-  padding: 15px;
-  background-color: #dff0d8; /* verde claro */
-  border: 1px solid #a3c293;
-  border-radius: 6px;
-  font-size: 1rem;
-  color: #3c763d;
+  padding: 16px;
+  background-color: #f2f2f2;
+  border-radius: 12px;
   max-width: 640px;
-  word-wrap: break-word;
+  font-family: 'Segoe UI', sans-serif;
 }
+
+.resultado h2 {
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.ficha-producto p {
+  margin: 4px 0;
+  font-size: 15px;
+}
+
+.ficha-producto strong {
+  color: #444;
+}
+
+
