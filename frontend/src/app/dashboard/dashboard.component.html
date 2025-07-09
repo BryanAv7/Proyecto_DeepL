@@ -1,0 +1,30 @@
+<div class="dashboard-container">
+    <nav class="sidebar">
+        <h3>Cargar Imagen</h3>
+        <input type="file" (change)="onFileSelected($event)" accept="image/*" />
+        <p *ngIf="fileName">Archivo seleccionado: {{ fileName }}</p>
+
+        <button (click)="onPredict()" [disabled]="!imageSrc" class="btn-predict" type="button">
+            Predicción
+        </button>
+    </nav>
+
+    <main class="content">
+        <h1>Dashboard</h1>
+        <p>Contenido principal aquí</p>
+
+        <div class="image-preview-container">
+            <img *ngIf="imageSrc" [src]="imageSrc" alt="Imagen cargada" class="img-preview" />
+        </div>
+
+        <div class="resultado">
+            <ng-container *ngIf="cargando; else mostrarResultado">
+                Procesando predicción...
+            </ng-container>
+
+            <ng-template #mostrarResultado>
+                <pre *ngIf="resultado">{{ resultado | json }}</pre>
+            </ng-template>
+        </div>
+    </main>
+</div>
