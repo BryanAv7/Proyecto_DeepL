@@ -179,4 +179,4 @@ async def predict_product(file: UploadFile = File(...)):
 
 @app.get("/api/saludo")
 def obtener_saludo():
-    return {"mensaje": "¡Hola Mundo desde FastAPI!"}
+    return {"mensaje": "🚀¡Aplicación de Inteligencia Artificial para el Reconocimiento de Productos!"}

@@ -58,4 +58,20 @@ export class DashboardComponent {
       }
     });
   }
+  // Método para resetear el formulario y los datos
+ onReset() {
+    this.fileName = '';
+    this.imageSrc = null;
+    this.imageFile = null;
+    this.resultado = {}; 
+    this.cargando = false;
+    
+    
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    if (fileInput) {
+        fileInput.value = '';
+    }
 }
+}
+
+

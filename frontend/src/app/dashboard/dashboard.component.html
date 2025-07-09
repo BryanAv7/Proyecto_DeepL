@@ -7,11 +7,15 @@
         <button (click)="onPredict()" [disabled]="!imageSrc" class="btn-predict" type="button">
             Predicción
         </button>
+
+        <button (click)="onReset()" class="btn-reset" type="button">
+            Reiniciar
+        </button>
     </nav>
 
     <main class="content">
-        <h1>Dashboard</h1>
-        <p>Contenido principal aquí</p>
+        <h1>Reconocimiento Automático de Productos</h1>
+        <p>📷 Imagen cargada</p>
 
         <div class="image-preview-container">
             <img *ngIf="imageSrc" [src]="imageSrc" alt="Imagen cargada" class="img-preview" />
