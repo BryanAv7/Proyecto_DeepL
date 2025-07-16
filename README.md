@@ -53,6 +53,18 @@ pip install -r requirements.txt
 ```bash
 pip install fastapi uvicorn torch torchvision opencv-python pandas pillow ultralytics
 ```
+> [!IMPORTANT]
+> Es importante saber que para la *nueva* integracion del Asitente se necesita nuevas importaciones y una API-KEY que se tiene que configurar de manera manual por seguridad.
+>
+> Se esta usando el LLM de GEMINI
+>
+>Modelo: gemini-1.5-flash
+> 
+> Librerias:
+> ```
+> pip install sentence-transformers
+> pip install google-generativeai
+> ```
 
 ---
 
