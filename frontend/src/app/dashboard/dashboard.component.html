@@ -1,47 +1,69 @@
 <div class="dashboard-container">
-    <nav class="sidebar">
-        <h3>Cargar Imagen</h3>
-        <input type="file" (change)="onFileSelected($event)" accept="image/*" />
-        <p *ngIf="fileName">Archivo seleccionado: {{ fileName }}</p>
+  <nav class="sidebar">
+    <h3>Cargar Imagen</h3>
+    <input type="file" (change)="onFileSelected($event)" accept="image/*" />
+    <p *ngIf="fileName">Archivo seleccionado: {{ fileName }}</p>
 
-        <button (click)="onPredict()" [disabled]="!imageSrc" class="btn-predict" type="button">
-            Predicción
-        </button>
+    <button (click)="onPredict()" [disabled]="!imageSrc" class="btn-predict" type="button">
+      Predicción
+    </button>
 
-        <button (click)="onReset()" class="btn-reset" type="button">
-            Reiniciar
-        </button>
+    <button (click)="onReset()" class="btn-reset" type="button">
+      Reiniciar
+    </button>
 
-        <button (click)="logout()" class="btn-logout" type="button">
-  Cerrar sesión
-</button>
-    </nav>
+    <button (click)="logout()" class="btn-logout" type="button">
+      Cerrar sesión
+    </button>
+  </nav>
 
-    <main class="content">
-        <h1>Reconocimiento Automático de Productos</h1>
-        <p class="descripcion">
-  Por favor, selecciona una imagen del producto desde el panel lateral izquierdo y haz clic en <strong>“Predicción”</strong> para obtener automáticamente sus detalles.
-</p>
-        <p *ngIf="imageSrc && !resultado && !cargando">✅ Carga exitosa, esperando a predecir...</p>
+  <main class="content">
+    <h1>Reconocimiento Automático de Productos</h1>
+    <p class="descripcion">
+      Por favor, selecciona una imagen del producto desde el panel lateral izquierdo y haz clic en <strong>“Predicción”</strong> para obtener automáticamente sus detalles.
+    </p>
+    <p *ngIf="imageSrc && !resultado && !cargando">✅ Carga exitosa, esperando a predecir...</p>
 
+    <div class="image-preview-container">
+      <img *ngIf="imageSrc" [src]="imageSrc" alt="" class="img-preview" />
+    </div>
 
-        <div class="image-preview-container">
-  <img *ngIf="imageSrc" [src]="imageSrc" alt="" class="img-preview" />
-</div>
+    <!-- Resultado: Múltiples productos o uno solo -->
+    <div class="resultado" *ngIf="resultado && !cargando">
+      <h2>📦 Detalles de Productos Detectados</h2>
 
-        <div class="resultado" *ngIf="resultado.ID && !cargando">
-            <h2>📦 Detalles del Producto</h2>
-            <div class="ficha-producto">
-                <p><strong>ID:</strong> {{ resultado.ID }}</p>
-                <p><strong>Nombre:</strong> {{ resultado.Nombre }}</p>
-                <p><strong>Descripción:</strong> {{ resultado.Descripcion }}</p>
-                <p><strong>Categoría:</strong> {{ resultado.Categoria }}</p>
-                <p><strong>Costo:</strong> ${{ resultado.Costo }}</p>
-                <p><strong>Stock:</strong> {{ resultado.Stock }} unidades</p>
-                <p><strong>Fecha de Caducidad:</strong> {{ resultado.Fecha_Caducidad }}</p>
-                
-            </div>
+      <!-- Mostrar cantidad total -->
+      <p class="count" *ngIf="resultado.productos?.length">
+        🔎 Se detectaron {{ resultado.productos.length }} productos.
+      </p>
+
+      <!-- Si es una lista de productos -->
+      <ng-container *ngIf="resultado.productos?.length > 0; else productoUnico">
+        <div class="productos-grid">
+          <div *ngFor="let producto of resultado.productos" class="ficha-producto">
+            <p><strong>ID:</strong> {{ producto.ID }}</p>
+            <p><strong>Nombre:</strong> {{ producto.Nombre }}</p>
+            <p><strong>Descripción:</strong> {{ producto.Descripcion }}</p>
+            <p><strong>Categoría:</strong> {{ producto.Categoria }}</p>
+            <p><strong>Costo:</strong> ${{ producto.Costo }}</p>
+            <p><strong>Stock:</strong> {{ producto.Stock }} unidades</p>
+            <p><strong>Fecha de Caducidad:</strong> {{ producto.Fecha_Caducidad }}</p>
+          </div>
         </div>
+      </ng-container>
 
-    </main>
+      <!-- Si es un solo producto (formato anterior) -->
+      <ng-template #productoUnico>
+        <div class="ficha-producto">
+          <p><strong>ID:</strong> {{ resultado.ID }}</p>
+          <p><strong>Nombre:</strong> {{ resultado.Nombre }}</p>
+          <p><strong>Descripción:</strong> {{ resultado.Descripcion }}</p>
+          <p><strong>Categoría:</strong> {{ resultado.Categoria }}</p>
+          <p><strong>Costo:</strong> ${{ resultado.Costo }}</p>
+          <p><strong>Stock:</strong> {{ resultado.Stock }} unidades</p>
+          <p><strong>Fecha de Caducidad:</strong> {{ resultado.Fecha_Caducidad }}</p>
+        </div>
+      </ng-template>
+    </div>
+  </main>
 </div>

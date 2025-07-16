@@ -44,23 +44,23 @@ export class DashboardComponent {
   }
 
   onPredict() {
-    if (!this.imageFile) return;
+  if (!this.imageFile) return;
 
-    this.cargando = true;
-    this.resultado = null;
+  this.cargando = true;
+  this.resultado = null;
 
-    this.predictService.predictImage(this.imageFile).subscribe({
-      next: (res) => {
-        this.resultado = res;
-        this.cargando = false;
-      },
-      error: (err) => {
-        this.resultado = { error: 'Error en la predicción. Intenta de nuevo.' };
-        console.error(err);
-        this.cargando = false;
-      },
-    });
-  }
+  this.predictService.predictImage(this.imageFile).subscribe({
+    next: (res) => {
+      this.resultado = res;
+      this.cargando = false;
+    },
+    error: (err) => {
+      this.resultado = { error: 'Error en la predicción. Intenta de nuevo.' };
+      console.error(err);
+      this.cargando = false;
+    },
+  });
+}
 
   onReset() {
     this.resetForm();
