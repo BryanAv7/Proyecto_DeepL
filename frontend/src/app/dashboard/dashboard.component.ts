@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PredictService } from '../predict.service'; // Ajusta ruta según tu estructura
+import { PredictService } from '../predict.service';
+import { AuthService } from '../auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -8,24 +10,25 @@ import { PredictService } from '../predict.service'; // Ajusta ruta según tu es
   imports: [CommonModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
-  providers: [PredictService], // o si usas providedIn:'root' no es necesario
+  providers: [PredictService], // Si tienes providedIn:'root', puedes quitar esto
 })
 export class DashboardComponent {
   fileName = '';
   imageSrc: string | ArrayBuffer | null = null;
-  imageFile: File | null = null;  // Guardamos el archivo real
-  resultado: any = null;  // Ahora puede ser un objeto JSON
+  imageFile: File | null = null;
+  resultado: any = null;
   cargando = false;
 
-  constructor(private predictService: PredictService) { }
+  constructor(
+    private predictService: PredictService,
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
     if (!input.files || input.files.length === 0) {
-      this.fileName = '';
-      this.imageSrc = null;
-      this.imageFile = null;
-      this.resultado = '';
+      this.resetForm();
       return;
     }
 
@@ -35,7 +38,7 @@ export class DashboardComponent {
     const reader = new FileReader();
     reader.onload = () => {
       this.imageSrc = reader.result;
-      this.resultado = '';
+      this.resultado = null;
     };
     reader.readAsDataURL(this.imageFile);
   }
@@ -44,7 +47,7 @@ export class DashboardComponent {
     if (!this.imageFile) return;
 
     this.cargando = true;
-    this.resultado = '';
+    this.resultado = null;
 
     this.predictService.predictImage(this.imageFile).subscribe({
       next: (res) => {
@@ -55,23 +58,27 @@ export class DashboardComponent {
         this.resultado = { error: 'Error en la predicción. Intenta de nuevo.' };
         console.error(err);
         this.cargando = false;
-      }
+      },
     });
   }
-  // Método para resetear el formulario y los datos
- onReset() {
+
+  onReset() {
+    this.resetForm();
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+  }
+
+  private resetForm() {
     this.fileName = '';
     this.imageSrc = null;
     this.imageFile = null;
-    this.resultado = {}; 
+    this.resultado = null;
     this.cargando = false;
-    
-    
-    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
-    if (fileInput) {
-        fileInput.value = '';
-    }
-}
-}
+  }
 
-
+  logout() {
+    this.authService.logout();
+  }
+}
