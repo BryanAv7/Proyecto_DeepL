@@ -1,0 +1,16 @@
+ID,Nombre,Descripcion,Costo,Fecha_Caducidad,Categoria,Stock,Tipo_promocion_aplicable,Historico_ventas_semanales;;;;;;;
+79ae74fa,Chetos,Snacks de maíz con queso,1.15,2025-09-10,Snacks,85,2x1,60;;;;;;;
+642fcf3e,Coca Cola Botella,Bebida gaseosa sabor cola 600ml,0.92,2025-11-25,Bebidas,115,2x1,90;;;;;;;
+90a8f2a5,Coca Cola Lata,Bebida gaseosa sabor cola 355ml,0.89,2025-11-15,Bebidas,110,Descuento,85;;;;;;;
+274ed5aa,Doritos,Snacks sabor queso nacho,1.2,2025-08-18,Snacks,90,Combo,65;;;;;;;
+d8e209f7,Froot Loops,Cereal de colores sabor frutas,2.45,2025-11-30,Cereales,65,Combo,48;;;;;;;
+a95ab3e9,Mayonesa,Aderezo tipo casero sabor suave,1.35,2025-10-20,Salsas,60,Ninguna,35;;;;;;;
+af8afcd9,Mostaza,Salsa de mostaza amarilla,1.25,2025-10-10,Salsas,58,Descuento,40;;;;;;;
+ae59bd37,Pepsi Botella,Bebida gaseosa refrescante 600ml,0.87,2025-12-05,Bebidas,100,2x1,82;;;;;;;
+8dad85bf,Pepsi Lata,Bebida gaseosa refrescante 355ml,0.84,2025-11-28,Bebidas,95,Combo,75;;;;;;;
+7f7d3c1f,Rufflez,Snacks de maíz sabor barbacoa,1.1,2025-08-25,Snacks,80,Descuento,50;;;;;;;
+2faed7a6,Salsa de Tomate,Salsa natural de tomate,1.3,2025-10-05,Salsas,62,Combo,42;;;;;;;
+ce2fe367,Sprite Lata,Bebida gaseosa sabor limón 355ml,0.86,2025-10-22,Bebidas,98,Descuento,68;;;;;;;
+7dc3af65,Sprite Botella,Bebida gaseosa sabor limón 600ml,0.91,2025-12-01,Bebidas,105,Ninguna,72;;;;;;;
+a6decf91,Trix,Cereal multicolor para niños,2.5,2026-01-01,Cereales,70,Descuento,55;;;;;;;
+86f78320,Zucaritas,Cereal de hojuelas azucaradas,2.4,2025-12-25,Cereales,75,Ninguna,40;;;;;;;
