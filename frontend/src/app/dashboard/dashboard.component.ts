@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
   imports: [CommonModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
-  providers: [PredictService], // Si tienes providedIn:'root', puedes quitar esto
+  providers: [PredictService], 
 })
 export class DashboardComponent {
   fileName = '';

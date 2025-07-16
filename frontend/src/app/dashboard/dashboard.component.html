@@ -19,11 +19,15 @@
 
     <main class="content">
         <h1>Reconocimiento Automático de Productos</h1>
-        <p>📷 Imagen cargada</p>
+        <p class="descripcion">
+  Por favor, selecciona una imagen del producto desde el panel lateral izquierdo y haz clic en <strong>“Predicción”</strong> para obtener automáticamente sus detalles.
+</p>
+        <p *ngIf="imageSrc && !resultado && !cargando">✅ Carga exitosa, esperando a predecir...</p>
+
 
         <div class="image-preview-container">
-            <img *ngIf="imageSrc" [src]="imageSrc" alt="Imagen cargada" class="img-preview" />
-        </div>
+  <img *ngIf="imageSrc" [src]="imageSrc" alt="" class="img-preview" />
+</div>
 
         <div class="resultado" *ngIf="resultado.ID && !cargando">
             <h2>📦 Detalles del Producto</h2>

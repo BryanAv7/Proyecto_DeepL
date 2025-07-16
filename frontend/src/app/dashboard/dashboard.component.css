@@ -4,6 +4,14 @@
   font-family: Arial, sans-serif;
 }
 
+.descripcion {
+  font-size: 16px;
+  color: #444;
+  margin-bottom: 16px;
+  max-width: 640px;
+  line-height: 1.6;
+}
+
 .sidebar {
   width: 220px;
   background-color: #2c3e50;
