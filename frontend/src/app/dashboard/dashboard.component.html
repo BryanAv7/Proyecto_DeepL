@@ -20,7 +20,8 @@
   <main class="content">
     <h1>Reconocimiento Automático de Productos</h1>
     <p class="descripcion">
-      Por favor, selecciona una imagen del producto desde el panel lateral izquierdo y haz clic en <strong>“Predicción”</strong> para obtener automáticamente sus detalles.
+      Por favor, selecciona una imagen del producto desde el panel lateral izquierdo y haz clic en
+      <strong>“Predicción”</strong> para obtener automáticamente sus detalles.
     </p>
     <p *ngIf="imageSrc && !resultado && !cargando">✅ Carga exitosa, esperando a predecir...</p>
 
@@ -65,5 +66,27 @@
         </div>
       </ng-template>
     </div>
+
+    <!-- 🧠 Asistente Inteligente -->
+    <hr />
+    <!-- Chat inteligente -->
+    <section class="chat-container">
+      <h2>🧠 Asistente Inteligente</h2>
+
+      <div class="chat-box">
+        <div *ngFor="let mensaje of historialChat" [ngClass]="mensaje.tipo">
+          <strong *ngIf="mensaje.tipo === 'usuario'">Tú:</strong>
+          <strong *ngIf="mensaje.tipo === 'asistente'">Asistente:</strong>
+          <p>{{ mensaje.texto }}</p>
+        </div>
+      </div>
+
+      <div class="chat-input">
+        <input type="text" placeholder="Escribe tu pregunta..." [(ngModel)]="mensajeUsuario"
+          (keydown.enter)="enviarMensaje()" />
+        <button (click)="enviarMensaje()">Enviar</button>
+      </div>
+    </section>
+
   </main>
 </div>

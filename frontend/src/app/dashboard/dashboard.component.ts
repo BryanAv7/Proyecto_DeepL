@@ -3,14 +3,16 @@ import { CommonModule } from '@angular/common';
 import { PredictService } from '../predict.service';
 import { AuthService } from '../auth.service';
 import { Router } from '@angular/router';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule, HttpClientModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
-  providers: [PredictService], 
+  providers: [PredictService],
 })
 export class DashboardComponent {
   fileName = '';
@@ -19,10 +21,15 @@ export class DashboardComponent {
   resultado: any = null;
   cargando = false;
 
+  // Propiedades para el chat
+  mensajeUsuario = '';
+  historialChat: { tipo: 'usuario' | 'asistente'; texto: string }[] = [];
+
   constructor(
     private predictService: PredictService,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private http: HttpClient
   ) {}
 
   onFileSelected(event: Event) {
@@ -44,23 +51,23 @@ export class DashboardComponent {
   }
 
   onPredict() {
-  if (!this.imageFile) return;
+    if (!this.imageFile) return;
 
-  this.cargando = true;
-  this.resultado = null;
+    this.cargando = true;
+    this.resultado = null;
 
-  this.predictService.predictImage(this.imageFile).subscribe({
-    next: (res) => {
-      this.resultado = res;
-      this.cargando = false;
-    },
-    error: (err) => {
-      this.resultado = { error: 'Error en la predicción. Intenta de nuevo.' };
-      console.error(err);
-      this.cargando = false;
-    },
-  });
-}
+    this.predictService.predictImage(this.imageFile).subscribe({
+      next: (res) => {
+        this.resultado = res;
+        this.cargando = false;
+      },
+      error: (err) => {
+        this.resultado = { error: 'Error en la predicción. Intenta de nuevo.' };
+        console.error(err);
+        this.cargando = false;
+      },
+    });
+  }
 
   onReset() {
     this.resetForm();
@@ -81,4 +88,27 @@ export class DashboardComponent {
   logout() {
     this.authService.logout();
   }
+
+  // === 🧠 Asistente ===
+  enviarMensaje() {
+  const pregunta = this.mensajeUsuario.trim();
+  if (!pregunta) return;
+
+  this.historialChat.push({ tipo: 'usuario', texto: pregunta });
+  this.mensajeUsuario = '';
+
+  this.http.post<any>('http://127.0.0.1:8000/api/asistente', { mensaje: pregunta }).subscribe({
+    next: (res) => {
+      const respuestaTexto = res.respuesta_llm || 'No se encontró respuesta.';
+      this.historialChat.push({ tipo: 'asistente', texto: respuestaTexto });
+    },
+    error: (err) => {
+      console.error('Error en el asistente:', err);
+      this.historialChat.push({
+        tipo: 'asistente',
+        texto: '❌ Ocurrió un error al procesar tu pregunta. Inténtalo de nuevo.',
+      });
+    },
+  });
+}
 }
