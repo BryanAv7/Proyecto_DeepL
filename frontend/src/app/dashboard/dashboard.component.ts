@@ -74,7 +74,7 @@ export class DashboardComponent {
     this.fileName = '';
     this.imageSrc = null;
     this.imageFile = null;
-    this.resultado = null;
+    this.resultado = {};
     this.cargando = false;
   }
 
