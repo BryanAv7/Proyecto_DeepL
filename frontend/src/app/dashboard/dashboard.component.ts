@@ -111,4 +111,10 @@ export class DashboardComponent {
     },
   });
 }
+
+limpiarMensaje() {
+  this.mensajeUsuario = '';
+  this.historialChat = [];
+}
+
 }

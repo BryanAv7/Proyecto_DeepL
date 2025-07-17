@@ -85,6 +85,7 @@
         <input type="text" placeholder="Escribe tu pregunta..." [(ngModel)]="mensajeUsuario"
           (keydown.enter)="enviarMensaje()" />
         <button (click)="enviarMensaje()">Enviar</button>
+        <button (click)="limpiarMensaje()" class="btn-limpiar">Limpiar</button>
       </div>
     </section>
 
