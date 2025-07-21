@@ -1,4 +1,5 @@
 # Librerias por utilizar
+# verison de Script: v3.2
 from fastapi import FastAPI, File, UploadFile, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from PIL import Image
@@ -19,6 +20,12 @@ from ultralytics import YOLO
  
 
 app = FastAPI()
+
+# Configuracion RUTAS
+RUTA_DATASET = "../modelos/data_actualizadoArreglado.csv"
+RUTAS_MODELO_YOLO = "../modelos/last.pt"
+RUTAS_MODELO_CNN = "../modelos/modelo_productosbeta.pth"
+print("Backend > Rutas definidas")
 
 # Configuración CORS
 app.add_middleware(
@@ -126,7 +133,7 @@ def texto_estructurado(row, pregunta=""):
     return base + refuerzo
 
 def cargar_inventario():
-    df = pd.read_csv("../modelos/data_actualizadoArreglado.csv")
+    df = pd.read_csv(RUTA_DATASET)
     df = aplicar_ingenieria_variables(df)
 
     # Generar texto enriquecido con estructura y refuerzo
@@ -168,7 +175,7 @@ async def load_models():
 
     try:
         # Cargar modelo YOLOv8
-        yolo_model = YOLO('../modelos/last.pt')  
+        yolo_model = YOLO(RUTAS_MODELO_YOLO)  
         print("✅ Modelo YOLOv8 cargado correctamente")
         
         # Definir el mapeo de etiquetas 
@@ -194,7 +201,7 @@ async def load_models():
 
         # Instanciar y cargar modelo CNN
         cnn_model = RobustCNN(num_classes=num_classes)
-        checkpoint = torch.load('../modelos/modelo_productosbeta.pth', map_location=torch.device('cpu'))
+        checkpoint = torch.load(RUTAS_MODELO_CNN, map_location=torch.device('cpu'))
         cnn_model.load_state_dict(checkpoint['modelo_estado'])
         cnn_model.eval()
         print("✅ Modelo CNN cargado correctamente")
@@ -208,7 +215,7 @@ async def load_models():
         ])
 
         # ✅ Cargar archivo CSV con información detallada de productos
-        productos_df = pd.read_csv('../modelos/data_actualizadoArreglado.csv')
+        productos_df = pd.read_csv(RUTA_DATASET)
         print("✅ Datos de productos cargados correctamente")
 
     except Exception as e:
