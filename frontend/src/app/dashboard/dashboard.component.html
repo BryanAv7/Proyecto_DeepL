@@ -39,30 +39,40 @@
       </p>
 
       <!-- Si es una lista de productos -->
-      <ng-container *ngIf="resultado.productos?.length > 0; else productoUnico">
-        <div class="productos-grid">
-          <div *ngFor="let producto of resultado.productos" class="ficha-producto">
-            <p><strong>ID:</strong> {{ producto.ID }}</p>
-            <p><strong>Nombre:</strong> {{ producto.Nombre }}</p>
-            <p><strong>Descripción:</strong> {{ producto.Descripcion }}</p>
-            <p><strong>Categoría:</strong> {{ producto.Categoria }}</p>
-            <p><strong>Costo:</strong> ${{ producto.Costo }}</p>
-            <p><strong>Stock:</strong> {{ producto.Stock }} unidades</p>
-            <p><strong>Fecha de Caducidad:</strong> {{ producto.Fecha_Caducidad }}</p>
-          </div>
-        </div>
-      </ng-container>
+<ng-container *ngIf="resultado.productos?.length > 0; else productoUnico">
+  <div class="productos-grid">
+    <div *ngFor="let producto of resultado.productos" class="ficha-producto">
+      
+      <!-- Mostrar imagen del recorte de Yolo -->
+      <div *ngIf="producto.imagen_crop_base64" class="imagen-recorte-container">
+        <p><strong>🛒Producto Detectado:</strong></p>
+        <img [src]="'data:image/jpeg;base64,' + producto.imagen_crop_base64"
+             alt="Producto recortado"
+             class="imagen-recorte" />
+      </div>
+
+      <!--<p><strong>ID:</strong> {{ producto.ID }}</p>-->
+      <p><strong>Nombre:</strong> {{ producto.Nombre }}</p>
+      <p><strong>Descripción:</strong> {{ producto.Descripcion }}</p>
+      <!--<p><strong>Categoría:</strong> {{ producto.Categoria }}</p></p>-->
+      <p><strong>Costo:</strong> ${{ producto.Costo }}</p>
+      <p><strong>Stock:</strong> {{ producto.Stock }} unidades</p>
+      <!--<p><strong>Fecha de Caducidad:</strong> {{ producto.Fecha_Caducidad }}</p> </p>-->
+    </div>
+  </div>
+</ng-container>
+
 
       <!-- Si es un solo producto (formato anterior) -->
       <ng-template #productoUnico>
         <div class="ficha-producto">
-          <p><strong>ID:</strong> {{ resultado.ID }}</p>
+          <!--<p><p><strong>ID:</strong> {{ resultado.ID }}</p> </p>-->
           <p><strong>Nombre:</strong> {{ resultado.Nombre }}</p>
           <p><strong>Descripción:</strong> {{ resultado.Descripcion }}</p>
-          <p><strong>Categoría:</strong> {{ resultado.Categoria }}</p>
+          <!--<p><p><strong>Categoría:</strong> {{ resultado.Categoria }}</p> </p>-->
           <p><strong>Costo:</strong> ${{ resultado.Costo }}</p>
           <p><strong>Stock:</strong> {{ resultado.Stock }} unidades</p>
-          <p><strong>Fecha de Caducidad:</strong> {{ resultado.Fecha_Caducidad }}</p>
+          <!--<p><p><strong>Fecha de Caducidad:</strong> {{ resultado.Fecha_Caducidad }}</p> </p>-->
         </div>
       </ng-template>
     </div>

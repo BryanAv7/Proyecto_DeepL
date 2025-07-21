@@ -13,6 +13,7 @@ import pandas as pd
 import google.generativeai as genai
 from datetime import datetime
 from sentence_transformers import SentenceTransformer, util
+import base64
 
 from ultralytics import YOLO  
  
@@ -125,7 +126,7 @@ def texto_estructurado(row, pregunta=""):
     return base + refuerzo
 
 def cargar_inventario():
-    df = pd.read_csv("modelos/data_actualizadoFinal2.csv")
+    df = pd.read_csv("../modelos/data_actualizadoArreglado.csv")
     df = aplicar_ingenieria_variables(df)
 
     # Generar texto enriquecido con estructura y refuerzo
@@ -149,7 +150,7 @@ Basándote en los siguientes productos encontrados, genera una respuesta amigabl
     prompt += "\nResponde de forma clara y útil:"
     return prompt
 
-genai.configure(api_key="API-KEY")  # ← Reemplaza con tu clave temporal
+genai.configure(api_key="...")  # ← Reemplaza con tu clave temporal
 
 #modelo_gemini = genai.GenerativeModel("gemini-pro")
 modelo_gemini = genai.GenerativeModel("gemini-1.5-flash")
@@ -167,7 +168,7 @@ async def load_models():
 
     try:
         # Cargar modelo YOLOv8
-        yolo_model = YOLO('modelos/last.pt')  
+        yolo_model = YOLO('../modelos/last.pt')  
         print("✅ Modelo YOLOv8 cargado correctamente")
         
         # Definir el mapeo de etiquetas 
@@ -193,7 +194,7 @@ async def load_models():
 
         # Instanciar y cargar modelo CNN
         cnn_model = RobustCNN(num_classes=num_classes)
-        checkpoint = torch.load('modelos/modelo_productosbeta.pth', map_location=torch.device('cpu'))
+        checkpoint = torch.load('../modelos/modelo_productosbeta.pth', map_location=torch.device('cpu'))
         cnn_model.load_state_dict(checkpoint['modelo_estado'])
         cnn_model.eval()
         print("✅ Modelo CNN cargado correctamente")
@@ -207,7 +208,7 @@ async def load_models():
         ])
 
         # ✅ Cargar archivo CSV con información detallada de productos
-        productos_df = pd.read_csv('modelos/data_actualizadoFinal2.csv')
+        productos_df = pd.read_csv('../modelos/data_actualizadoArreglado.csv')
         print("✅ Datos de productos cargados correctamente")
 
     except Exception as e:
@@ -352,12 +353,18 @@ async def predict_product(file: UploadFile = File(...)):
 
             # Convertir recorte a RGB y clasificar con CNN
             crop_rgb = cv2.cvtColor(crop, cv2.COLOR_BGR2RGB)
+
+            # Codificar imagen recortada como base64
+            _, buffer = cv2.imencode('.jpg', crop_rgb)
+            imagen_crop_base64 = base64.b64encode(buffer).decode('utf-8')
+
             etiqueta_cnn = await predict_product_id(crop_rgb)
 
             # Buscar en el DataFrame
             producto_info = productos_df[productos_df['ID'] == etiqueta_cnn]
             if not producto_info.empty:
                 producto_dict = producto_info.iloc[0].to_dict()
+                producto_dict["imagen_crop_base64"] = imagen_crop_base64  # ← Agregamos la imagen recortada
                 productos_detectados.append(producto_dict)
             else:
                 print(f"⚠️ Producto con ID {etiqueta_cnn} no encontrado en CSV.")
