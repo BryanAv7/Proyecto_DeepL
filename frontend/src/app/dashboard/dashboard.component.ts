@@ -5,11 +5,12 @@ import { AuthService } from '../auth.service';
 import { Router } from '@angular/router';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { BotonFlotanteComponent } from '../boton-flotante/boton-flotante.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule, HttpClientModule,BotonFlotanteComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
   providers: [PredictService],
@@ -20,10 +21,6 @@ export class DashboardComponent {
   imageFile: File | null = null;
   resultado: any = null;
   cargando = false;
-
-  // Propiedades para el chat
-  mensajeUsuario = '';
-  historialChat: { tipo: 'usuario' | 'asistente'; texto: string }[] = [];
 
   constructor(
     private predictService: PredictService,
@@ -88,33 +85,5 @@ export class DashboardComponent {
   logout() {
     this.authService.logout();
   }
-
-  // === 🧠 Asistente ===
-  enviarMensaje() {
-  const pregunta = this.mensajeUsuario.trim();
-  if (!pregunta) return;
-
-  this.historialChat.push({ tipo: 'usuario', texto: pregunta });
-  this.mensajeUsuario = '';
-
-  this.http.post<any>('http://127.0.0.1:8000/api/asistente', { mensaje: pregunta }).subscribe({
-    next: (res) => {
-      const respuestaTexto = res.respuesta_llm || 'No se encontró respuesta.';
-      this.historialChat.push({ tipo: 'asistente', texto: respuestaTexto });
-    },
-    error: (err) => {
-      console.error('Error en el asistente:', err);
-      this.historialChat.push({
-        tipo: 'asistente',
-        texto: '❌ Ocurrió un error al procesar tu pregunta. Inténtalo de nuevo.',
-      });
-    },
-  });
-}
-
-limpiarMensaje() {
-  this.mensajeUsuario = '';
-  this.historialChat = [];
-}
 
 }

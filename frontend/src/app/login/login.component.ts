@@ -15,6 +15,7 @@ export class LoginComponent {
     // Si el usuario ya está autenticado, redirige al dashboard
     if (this.authService.isLoggedIn()) {
       this.router.navigate(['/dashboard']);
+      //La logica ahora se maneja en APP.ROUTES.TS Y Guard
     }
   }
 

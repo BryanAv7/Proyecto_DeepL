@@ -1,14 +1,17 @@
 <div class="login-container">
   <h2>
     <span class="icon shop-icon" aria-hidden="true"></span>
-    🛒Bienvenido a <span class="brand">SmartShop🛍️ </span>
+    🛒Bienvenido a <span class="brand">SmartShop🛍️</span>
   </h2>
   <p class="subtitle">
     <span class="icon market-icon" aria-hidden="true"></span>
     Inicia sesión con tu cuenta de Google
   </p>
-  <button type="button" (click)="onLogin()" class="btn-login">
-    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" />
-    Ingresar con Google
+
+  <button type="button" (click)="onLogin()" class="btn-login-google">
+    <span class="icon-wrapper">
+      <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" />
+    </span>
+    <span class="btn-text">Ingresar con Google</span>
   </button>
 </div>

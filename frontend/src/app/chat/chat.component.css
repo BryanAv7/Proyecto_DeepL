@@ -1,0 +1,156 @@
+/* Estilo general */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 90vh; /* Ajustable según tu navbar */
+  max-width: 600px;
+  margin: auto;
+  padding: 1rem;
+  background-color: #f7f7f7;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+/* Título */
+.chat-container h2 {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+/* Envoltura para posición relativa del botón flotante */
+.chat-box-wrapper {
+  position: relative;
+  flex: 1; /* Ocupa todo el espacio restante */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Caja de mensajes con scroll interno */
+.chat-box {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+  background-color: #fff;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* Burbujas de mensaje */
+.chat-box div {
+  padding: 0.75rem 1rem;
+  border-radius: 16px;
+  max-width: 80%;
+  word-wrap: break-word;
+}
+
+/* Estilos para usuario y asistente */
+.usuario {
+  align-self: flex-end;
+  background-color: #d1e7dd;
+  color: #0f5132;
+}
+.asistente {
+  align-self: flex-start;
+  background-color: #e7f1ff;
+  color: #084298;
+}
+.usuario strong,
+.asistente strong {
+  font-size: 0.75rem;
+  margin-bottom: 0.25rem;
+  opacity: 0.8;
+}
+
+/* Entrada del usuario */
+.chat-input {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+.chat-input input {
+  flex-grow: 1;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+.chat-input button {
+  padding: 0.5rem 1rem;
+  border: none;
+  background-color: #1976d2;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.chat-input button:hover {
+  background-color: #125ea9;
+}
+.btn-limpiar {
+  background-color: #f44336;
+}
+.btn-limpiar:hover {
+  background-color: #c62828;
+}
+
+
+/* Botón flotante mejorado */
+.scroll-bottom-btn {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  background-color: #1976d2;
+  border: none;
+  border-radius: 50%;
+  padding: 0.75rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: transform 0.2s ease, background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scroll-bottom-btn:hover {
+  transform: scale(1.1);
+  background-color: #125ea9;
+}
+
+.scroll-bottom-btn svg {
+  fill: white;
+}
+
+/* Bienvenida centrada y animada */
+.mensaje-bienvenida {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  font-size: 1.1rem;
+  color: #666;
+  opacity: 0;
+  animation: fadeInUp 1s ease-out forwards;
+  line-height: 1.6;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  background-color: #ffffffcc;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 90%;
+}
+
+/* Animación suave de aparición */
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -40%);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%);
+  }
+}

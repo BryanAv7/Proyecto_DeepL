@@ -76,28 +76,6 @@
         </div>
       </ng-template>
     </div>
-
-    <!-- 🧠 Asistente Inteligente -->
-    <hr />
-    <!-- Chat inteligente -->
-    <section class="chat-container">
-      <h2>🧠 Asistente Inteligente</h2>
-
-      <div class="chat-box">
-        <div *ngFor="let mensaje of historialChat" [ngClass]="mensaje.tipo">
-          <strong *ngIf="mensaje.tipo === 'usuario'">Tú:</strong>
-          <strong *ngIf="mensaje.tipo === 'asistente'">Asistente:</strong>
-          <p>{{ mensaje.texto }}</p>
-        </div>
-      </div>
-
-      <div class="chat-input">
-        <input type="text" placeholder="Escribe tu pregunta..." [(ngModel)]="mensajeUsuario"
-          (keydown.enter)="enviarMensaje()" />
-        <button (click)="enviarMensaje()">Enviar</button>
-        <button (click)="limpiarMensaje()" class="btn-limpiar">Limpiar</button>
-      </div>
-    </section>
-
   </main>
 </div>
+<app-boton-flotante></app-boton-flotante>

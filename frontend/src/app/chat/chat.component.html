@@ -1,0 +1,37 @@
+<section class="chat-container">
+  <h2>🧠 Asistente Inteligente</h2>
+
+  <div class="chat-box-wrapper">
+    <div #chatBox class="chat-box">
+      <!-- Mensaje de bienvenida -->
+      <div *ngIf="historialChat.length === 0" class="mensaje-bienvenida">
+        💬 <strong>¡Hola! Soy tu asistente inteligente.</strong><br />
+        Escribe una pregunta para comenzar.
+      </div>
+
+
+      <!-- Historial -->
+      <div *ngFor="let mensaje of historialChat" [ngClass]="mensaje.tipo">
+        <strong *ngIf="mensaje.tipo === 'usuario'">Tú:</strong>
+        <strong *ngIf="mensaje.tipo === 'asistente'">Asistente:</strong>
+        <p>{{ mensaje.texto }}</p>
+      </div>
+    </div>
+
+    <!-- Botón estilizado con ícono -->
+    <button class="scroll-bottom-btn" (click)="scrollToBottom()" title="Ir al último mensaje">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+        <path fill="white" d="M12 16.5l-6-6 1.41-1.42L12 13.67l4.59-4.59L18 10.5z" />
+      </svg>
+    </button>
+  </div>
+
+  <div class="chat-input">
+    <input type="text" placeholder="Escribe tu pregunta..." [(ngModel)]="mensajeUsuario"
+      (keydown.enter)="enviarMensaje()" />
+    <button (click)="enviarMensaje()">Enviar</button>
+    <button (click)="limpiarMensaje()" class="btn-limpiar">Limpiar</button>
+  </div>
+</section>
+
+<app-boton-flotante></app-boton-flotante>
