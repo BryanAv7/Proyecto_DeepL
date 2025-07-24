@@ -15,6 +15,16 @@ import google.generativeai as genai
 from datetime import datetime
 from sentence_transformers import SentenceTransformer, util
 import base64
+import difflib
+from rapidfuzz import fuzz
+from sentence_transformers.util import cos_sim
+
+
+from google.cloud import vision
+from google.cloud.vision_v1 import types
+import os
+import io
+import re
 
 from ultralytics import YOLO  
  
@@ -25,6 +35,7 @@ app = FastAPI()
 RUTA_DATASET = "../modelos/data_actualizadoArreglado.csv"
 RUTAS_MODELO_YOLO = "../modelos/last.pt"
 RUTAS_MODELO_CNN = "../modelos/modelo_productosbeta.pth"
+RUTAS_OCR = "../modelos/ocr-productos-466521-3734397fcb54.json" 
 print("Backend > Rutas definidas")
 
 # Configuración CORS
@@ -157,7 +168,7 @@ Basándote en los siguientes productos encontrados, genera una respuesta amigabl
     prompt += "\nResponde de forma clara y útil:"
     return prompt
 
-genai.configure(api_key="...")  # ← Reemplaza con tu clave temporal
+genai.configure(api_key="AIzaSyCr7k0APdSS48cyQFIas3_v2zFDkkTr1zs")  # ← Reemplaza con tu clave temporal
 
 #modelo_gemini = genai.GenerativeModel("gemini-pro")
 modelo_gemini = genai.GenerativeModel("gemini-1.5-flash")
@@ -239,8 +250,17 @@ async def get_all_detected_labels(image_bytes, conf_threshold=0.20):
         idx2id = {v: k for k, v in id2label.items()}
         productos_detectados = []
 
+        # ✅ Filtrar una sola detección por clase (la de mayor confianza)
+        detecciones_por_clase = {}
         for box in detections:
             class_idx = int(box.cls.item())
+            if class_idx not in detecciones_por_clase:
+                detecciones_por_clase[class_idx] = box
+            else:
+                if box.conf.item() > detecciones_por_clase[class_idx].conf.item():
+                    detecciones_por_clase[class_idx] = box
+
+        for class_idx, box in detecciones_por_clase.items():
             confidence = float(box.conf.item())
             box_coords = list(map(int, box.xyxy[0].tolist()))
             label_str = idx2id.get(class_idx, str(class_idx))
@@ -257,6 +277,7 @@ async def get_all_detected_labels(image_bytes, conf_threshold=0.20):
     except Exception as e:
         print(f"❌ Error en get_all_detected_labels: {str(e)}")
         raise RuntimeError(f"Error en get_all_detected_labels: {str(e)}")
+
 
 # Endpoint adicional para obtener las detecciones YOLO múltiples
 @app.post("/api/yolo-detections")
@@ -307,7 +328,58 @@ async def get_most_confident_detection(image_bytes):
     except Exception as e:
         print(f"❌ Error en procesamiento YOLO: {str(e)}")
         raise RuntimeError(f"Error en procesamiento YOLO: {str(e)}")
+    
 
+# Función para realizar la predicción OCR
+def prediccion_ocr(crop_rgb):
+
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = RUTAS_OCR
+
+    pil_img = Image.fromarray(crop_rgb)
+    buf = io.BytesIO()
+    pil_img.save(buf, format='JPEG')
+    content = buf.getvalue()
+
+    client = vision.ImageAnnotatorClient()
+    image = types.Image(content=content)
+    response = client.text_detection(image=image)
+
+    if response.error.message:
+        print(f"❌ Error OCR: {response.error.message}")
+        return None
+
+    texts = response.text_annotations
+    if texts:
+        texto_completo = texts[0].description.strip()
+        lineas = texto_completo.splitlines()
+
+        mejor_linea = ""
+        mejor_limpio = ""
+
+        for linea in lineas:
+            limpia = re.sub(r'[^a-zA-Z]', '', linea).strip()
+            if len(limpia) >= 4:
+                mejor_linea = linea.strip()
+                mejor_limpio = limpia
+                break  
+
+            if not mejor_limpio and len(limpia) > 0:
+                mejor_linea = linea.strip()
+                mejor_limpio = limpia
+
+        if mejor_limpio:
+            print("\n::::::::::::::::::::..::::::::::::::::::::\n")
+            print(f"🔍Texto extraído por el OCR: {mejor_linea}")
+            return mejor_linea
+        else:
+            print("⚠️ OCR no extrajo texto útil.")
+            return None
+
+    else:
+        print("No se detectó texto.")
+        return None
+
+# Función para predecir el ID del producto usando CNN
 async def predict_product_id(image_crop):
     try:
         img_pil = Image.fromarray(image_crop)
@@ -326,6 +398,76 @@ async def predict_product_id(image_crop):
     except Exception as e:
         print(f"❌ Error en predicción CNN: {str(e)}")
         raise RuntimeError(f"Error en predicción CNN: {str(e)}")
+    
+    
+# Función para comparar OCR con CNN
+def coincidencia_ocr_cnn(texto_ocr: str, producto_cnn: dict, umbral_similitud: float = 30.0) -> str:
+    import difflib
+
+    if not texto_ocr or "Nombre" not in producto_cnn:
+        return "❌ Producto No Coincidente"
+
+    nombre_producto = str(producto_cnn["Nombre"]).lower()
+    texto_ocr = texto_ocr.lower()
+
+    similitud = difflib.SequenceMatcher(None, texto_ocr, nombre_producto).ratio() * 100
+    print("\n::::::::::::::::::::..::::::::::::::::::::\n")
+    print("🔎 Comparando OCR con CNN:")
+    print(f"OCR     → {texto_ocr}")
+    print(f"CNN     → {nombre_producto}")
+    print(f"📊 Similitud: {similitud:.2f}%")
+    
+    if similitud >= umbral_similitud:
+        return "✅ Producto Coincidente"
+    
+    else:
+        return "❌ Producto No Coincidente"
+
+
+# Función de búsqueda de coincidencias con respaldo fuzzy y embeddings
+def busqueda_comparacion(texto_ocr: str, df: pd.DataFrame, modelo_embed, umbral=0.30):
+    if not texto_ocr:
+        print("⚠️ Texto OCR vacío. No se puede buscar.")
+        return None
+
+    texto_ocr_limpio = texto_ocr.lower().strip()
+    print("\n:::::::::::::::Opción de Respaldo::::::::::::::::\n")
+    print(f"🔍 Buscando coincidencia para OCR: '{texto_ocr_limpio}'")
+
+    # Si la palabra capturada por OCR es Corta(menos de 3 letras), se aplica búsqueda fuzzy
+    if len(texto_ocr_limpio) <= 3:
+        print("🔎 Palabra OCR es corta, aplicando búsqueda fuzzy...")
+        for _, row in df.iterrows():
+            nombre = str(row['Nombre']).lower().strip()
+            score = fuzz.partial_ratio(texto_ocr_limpio, nombre) / 100.0
+            if score >= 0.80:
+                print(f"📌 Producto sugerido (por fuzzy): {row['Nombre']}")
+                print(f"🔍 Resultado final: {row['Nombre']} con score {score*100:.2f}%")
+                return row.to_dict()
+        print("⚠️ No se encontró coincidencia fuzzy suficiente. Continuando con embeddings...\n")
+
+    # Si la palabra capturada por OCR No es corta(menos de 3 letras), se usa normalmente embeddings
+    emb_ocr = modelo_embed.encode(texto_ocr_limpio)
+
+    for _, row in df.iterrows():
+        nombre = str(row['Nombre']).lower().strip()
+        descripcion = str(row['Descripcion']).lower().strip()
+
+        emb_nombre = modelo_embed.encode(nombre)
+        emb_descripcion = modelo_embed.encode(descripcion)
+
+        sim_nombre = cos_sim(emb_ocr, emb_nombre).item()
+        sim_desc = cos_sim(emb_ocr, emb_descripcion).item()
+
+        mejor_sim = max(sim_nombre, sim_desc)
+
+        if mejor_sim >= umbral:
+            print(f"🔍 Resultado final: {row['Nombre']} con similitud {mejor_sim*100:.2f}%")
+            return row.to_dict()
+
+    print("❌ No se encontró ningún producto con similitud suficiente.")
+    return None
+
 
 @app.post("/api/predict-product")
 async def predict_product(file: UploadFile = File(...)):
@@ -341,38 +483,52 @@ async def predict_product(file: UploadFile = File(...)):
         img_np = np.array(img)
         img_cv = cv2.cvtColor(img_np, cv2.COLOR_RGB2BGR)
 
-        # Obtener todas las detecciones YOLO
-        results = yolo_model(img_cv, conf=0.20)
-        detections = results[0].boxes
+        # ✅ Obtener solo una detección por clase (la de mayor confianza)
+        detecciones_filtradas = await get_all_detected_labels(image_bytes)
 
-        if len(detections) == 0:
+        if len(detecciones_filtradas) == 0:
             raise HTTPException(status_code=400, detail="No se detectaron productos en la imagen")
 
         productos_detectados = []
 
-        for box in detections:
-            x1, y1, x2, y2 = map(int, box.xyxy[0].tolist())
+        for det in detecciones_filtradas:
+            x1, y1, x2, y2 = det["box"]
             crop = img_cv[y1:y2, x1:x2]
 
             if crop.size == 0:
                 print("⚠️ Detección ignorada por recorte vacío.")
                 continue
 
-            # Convertir recorte a RGB y clasificar con CNN
+            # Convertir recorte a RGB y ejecutar OCR
             crop_rgb = cv2.cvtColor(crop, cv2.COLOR_BGR2RGB)
+            texto_ocr = prediccion_ocr(crop_rgb)  # ← Solo consola
 
             # Codificar imagen recortada como base64
             _, buffer = cv2.imencode('.jpg', crop_rgb)
             imagen_crop_base64 = base64.b64encode(buffer).decode('utf-8')
 
+            # Clasificación CNN
             etiqueta_cnn = await predict_product_id(crop_rgb)
 
-            # Buscar en el DataFrame
+            # Buscar información del producto por ID CNN
             producto_info = productos_df[productos_df['ID'] == etiqueta_cnn]
+
             if not producto_info.empty:
                 producto_dict = producto_info.iloc[0].to_dict()
-                producto_dict["imagen_crop_base64"] = imagen_crop_base64  # ← Agregamos la imagen recortada
+                producto_dict["imagen_crop_base64"] = imagen_crop_base64
                 productos_detectados.append(producto_dict)
+
+                # Comparar OCR vs CNN
+                resultado_validacion = coincidencia_ocr_cnn(texto_ocr, producto_dict)
+                print(f"➳Resultado de comparación: {resultado_validacion}")
+
+                # Si no hay coincidencia, buscar sugerencia (solo consola)
+                if "No Coincidente" in resultado_validacion:
+                    sugerido = busqueda_comparacion(texto_ocr, productos_df, modelo)
+                    if sugerido:
+                        print(f"📌 Producto sugerido: {sugerido['Nombre']}")
+                    else:
+                        print("📌 Sin sugerencia encontrada.")
             else:
                 print(f"⚠️ Producto con ID {etiqueta_cnn} no encontrado en CSV.")
 
@@ -386,7 +542,8 @@ async def predict_product(file: UploadFile = File(...)):
         print(f"❌ Error general en predict-product: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-
+#-----------------------------------------------------------
+# Endpoints adicionales para el asistente inteligente
 @app.get("/api/saludo")
 def obtener_saludo():
     return {"mensaje": "🚀¡Aplicación de Inteligencia Artificial para el Reconocimiento de Productos!"}
