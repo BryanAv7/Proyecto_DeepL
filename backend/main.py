@@ -168,7 +168,7 @@ Basándote en los siguientes productos encontrados, genera una respuesta amigabl
     prompt += "\nResponde de forma clara y útil:"
     return prompt
 
-genai.configure(api_key="AIzaSyCr7k0APdSS48cyQFIas3_v2zFDkkTr1zs")  # ← Reemplaza con tu clave temporal
+genai.configure(api_key="...")  # ← Reemplaza con tu clave temporal
 
 #modelo_gemini = genai.GenerativeModel("gemini-pro")
 modelo_gemini = genai.GenerativeModel("gemini-1.5-flash")
@@ -522,11 +522,20 @@ async def predict_product(file: UploadFile = File(...)):
                 resultado_validacion = coincidencia_ocr_cnn(texto_ocr, producto_dict)
                 print(f"➳Resultado de comparación: {resultado_validacion}")
 
-                # Si no hay coincidencia, buscar sugerencia (solo consola)
+                # Si no hay coincidencia, buscar sugerencia (solo consola) y usar producto sugerido
                 if "No Coincidente" in resultado_validacion:
                     sugerido = busqueda_comparacion(texto_ocr, productos_df, modelo)
                     if sugerido:
                         print(f"📌 Producto sugerido: {sugerido['Nombre']}")
+
+                        # Buscar info del producto sugerido por ID y reemplazar producto_dict
+                        producto_info_sug = productos_df[productos_df['ID'] == sugerido['ID']]
+                        if not producto_info_sug.empty:
+                            producto_dict_sug = producto_info_sug.iloc[0].to_dict()
+                            producto_dict_sug["imagen_crop_base64"] = imagen_crop_base64
+
+                            # Reemplazar el último producto agregado con el sugerido
+                            productos_detectados[-1] = producto_dict_sug
                     else:
                         print("📌 Sin sugerencia encontrada.")
             else:
