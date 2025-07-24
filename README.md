@@ -80,7 +80,47 @@ cd frontend
 npm install
 ```
 
+
 ---
+
+### 💻 Modelo de Detección y OCR de Productos
+
+Este proyecto implementa un modelo de detección de objetos basado en YOLOv8, entrenado con un dataset fusionado entre:
+
+• El dataset público SKU110K.
+
+• Un dataset personalizado, etiquetado manualmente en Roboflow, con imágenes de escaparates reales.
+
+
+El objetivo es detectar productos en estanterías de tiendas y extraer información textual relevante como nombre, marca, sabor, precio o fecha de caducidad mediante OCR.
+
+
+---
+
+🗃 Estructura del dataset fusionado
+
+dataset_fusionado/
+├── images/
+│   ├── train/
+│   ├── val/
+│   └── test/
+├── labels/
+│   ├── train/
+│   ├── val/
+│   └── test/
+
+
+---
+
+🔍 Implementación de OCR
+
+La extracción de texto se realiza sobre los productos recortados (bounding boxes) utilizando la API de Google Cloud Vision OCR, lo que permite obtener resultados más precisos que herramientas offline tradicionales, incluso en condiciones de imagen desafiantes.
+
+El OCR se aplica automáticamente sobre todas las imágenes recortadas, y los textos detectados se almacenan en archivos .csv y .json para facilitar su análisis posterior.
+
+
+---
+
 
 ## 🚀 ¿Cómo ejecutar la aplicación?
 
