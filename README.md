@@ -99,6 +99,7 @@ El objetivo es detectar productos en estanterías de tiendas y extraer informaci
 
 🗃 Estructura del dataset fusionado 
 
+```
 dataset_fusionado/
 │
 ├── images/                # Imágenes utilizadas para el entrenamiento y validación
@@ -110,6 +111,8 @@ dataset_fusionado/
 │   ├── train/             # Etiquetas del conjunto de entrenamiento
 │   ├── val/               # Etiquetas del conjunto de validación
 │   └── test/              # Etiquetas del conjunto de prueba
+
+```
 
 
 ---
